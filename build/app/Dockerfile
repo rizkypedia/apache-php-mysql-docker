@@ -1,4 +1,4 @@
-FROM php:7.3-apache-buster
+FROM php:7.4-apache-buster
 
 ARG APACHE_DOCUMENT_ROOT=/var/www/project/public
 ARG PHP_MEMORY_LIMIT=2G
@@ -27,11 +27,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libpng-dev \
         zlib1g-dev \
         libzip-dev \
+        g++ \
         apt-utils \
         libxml2-dev \
+        libyaml-dev -y \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-install -j$(nproc) iconv \
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-install soap \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install intl \
+    && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd mysqli pdo pdo_mysql zip soap opcache\
     && docker-php-ext-enable gd mysqli pdo pdo_mysql zip soap opcache \
     && pecl install xdebug-2.9.2 \
